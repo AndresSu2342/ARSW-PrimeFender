@@ -39,6 +39,46 @@ public class Control extends Thread {
         for(int i = 0;i < NTHREADS;i++ ) {
             pft[i].start();
         }
+
+        // Bucle de control mientras alguno de los hilos siga vivo
+        while (algunHiloVivo()) {
+            try {
+                Thread.sleep(TMILISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // Activa la pausa
+            synchronized(pauseControl) {
+                pauseControl.setPaused(true);
+            }
+
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            int totalPrimos = 0;
+            for (int i = 0; i < NTHREADS; i++) {
+                totalPrimos += pft[i].getPrimes().size();
+            }
+
+            System.out.println("Número de primos encontrados hasta el momento: " + totalPrimos);
+            System.out.println("Presione ENTER para continuar...");
+
+            // El usuario presiona ENTER
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            synchronized(pauseControl) {
+                pauseControl.setPaused(false);
+                pauseControl.notifyAll();
+            }
+        }
     }
     
 }
