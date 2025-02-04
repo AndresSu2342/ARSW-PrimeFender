@@ -5,16 +5,20 @@
  */
 package edu.eci.arsw.primefinder;
 
+import java.io.IOException;
+
 /**
  *
  */
 public class Control extends Thread {
     
     private final static int NTHREADS = 3;
-    private final static int MAXVALUE = 30000000;
-    private final static int TMILISECONDS = 5000;
+    private final static int MAXVALUE = 30000000; //30000000
+    private final static int TMILISECONDS = 3000;
 
     private final int NDATA = MAXVALUE / NTHREADS;
+
+    public static final PauseControl pauseControl = new PauseControl(); //
 
     private PrimeFinderThread pft[];
     
@@ -79,6 +83,15 @@ public class Control extends Thread {
                 pauseControl.notifyAll();
             }
         }
+    }
+
+    private boolean algunHiloVivo() {
+        for (int i = 0; i < NTHREADS; i++) {
+            if (pft[i].isAlive()) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }
