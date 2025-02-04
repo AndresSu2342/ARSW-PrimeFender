@@ -19,7 +19,18 @@ public class PrimeFinderThread extends Thread{
 
         @Override
 	public void run(){
-            for (int i= a;i < b;i++){						
+            for (int i= a;i < b;i++){
+
+                synchronized(Control.pauseControl) {
+                    while(Control.pauseControl.isPaused()){
+                        try {
+                            Control.pauseControl.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+
                 if (isPrime(i)){
                     primes.add(i);
                     System.out.println(i);
